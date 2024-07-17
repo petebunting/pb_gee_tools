@@ -48,7 +48,7 @@ setuptools.setup(
     #scripts=glob.glob("bin/*.py"),
     packages=["pb_gee_tools"],
     license="LICENSE.txt",
-    install_requires=["gee"],
+    install_requires=["earthengine-api"],
     url="https://github.com/petebunting/pb_gee_tools",
     classifiers=[
         "Intended Audience :: Developers",
