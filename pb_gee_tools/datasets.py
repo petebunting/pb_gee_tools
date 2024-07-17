@@ -55,6 +55,14 @@ def get_sr_landsat_collection(
     :return: A GEE Image Collection of the landsat images.
 
     """
+    ls_start = datetime.datetime(year=1982, month=7, day=16)
+    ls_end = datetime.datetime.now()
+
+    if not pb_gee_tools.utils._do_dates_overlap(
+            s1_date=start_date, e1_date=end_date, s2_date=ls_start, e2_date=ls_end
+    ):
+        raise Exception("Date range specified does not overlap "
+                        "with the availability of Landsat imagery.")
 
     ee_start_date = ee.Date.fromYMD(
         ee.Number(start_date.year),
@@ -154,15 +162,15 @@ def get_sr_landsat_collection(
         ls4_img_col = _read_ls_col(
             lt04_col, aoi, ee_start_date, ee_end_date, cloud_thres
         )
-        ls4_img_col.map(_mask_clouds)
-        ls4_img_col.map(_tm_band_sel_rename)
+
+        ls4_img_col = ls4_img_col.map(_mask_clouds).map(_tm_band_sel_rename)
         out_col = ls4_img_col
     if use_ls5:
         ls5_img_col = _read_ls_col(
             lt05_col, aoi, ee_start_date, ee_end_date, cloud_thres
         )
-        ls5_img_col.map(_mask_clouds)
-        ls5_img_col.map(_tm_band_sel_rename)
+
+        ls5_img_col = ls5_img_col.map(_mask_clouds).map(_tm_band_sel_rename)
         if not use_ls4:
             out_col = ls5_img_col
         else:
@@ -171,8 +179,8 @@ def get_sr_landsat_collection(
         ls7_img_col = _read_ls_col(
             le07_col, aoi, ee_start_date, ee_end_date, cloud_thres
         )
-        ls7_img_col.map(_mask_clouds)
-        ls7_img_col.map(_etm_band_sel_rename)
+
+        ls7_img_col = ls7_img_col.map(_mask_clouds).map(_etm_band_sel_rename)
         if (not use_ls4) and (not use_ls5):
             out_col = ls7_img_col
         else:
@@ -181,11 +189,11 @@ def get_sr_landsat_collection(
         ls8_img_col = _read_ls_col(
             lc08_col, aoi, ee_start_date, ee_end_date, cloud_thres
         )
-        ls8_img_col.map(_mask_clouds)
+
         if out_lstm_bands:
-            ls8_img_col.map(_oli_band_tm_sel_rename)
+            ls8_img_col = ls8_img_col.map(_mask_clouds).map(_oli_band_tm_sel_rename)
         else:
-            ls8_img_col.map(_oli_band_sel_rename)
+            ls8_img_col = ls8_img_col.map(_mask_clouds).map(_oli_band_sel_rename)
         if (not use_ls4) and (not use_ls5) and (not use_ls7):
             out_col = ls8_img_col
         else:
@@ -194,11 +202,11 @@ def get_sr_landsat_collection(
         ls9_img_col = _read_ls_col(
             lc09_col, aoi, ee_start_date, ee_end_date, cloud_thres
         )
-        ls9_img_col.map(_mask_clouds)
+
         if out_lstm_bands:
-            ls9_img_col.map(_oli_band_tm_sel_rename)
+            ls9_img_col = ls9_img_col.map(_mask_clouds).map(_oli_band_tm_sel_rename)
         else:
-            ls9_img_col.map(_oli_band_sel_rename)
+            ls9_img_col = ls9_img_col.map(_mask_clouds).map(_oli_band_sel_rename)
         if (not use_ls4) and (not use_ls5) and (not use_ls7) and (not use_ls8):
             out_col = ls9_img_col
         else:
@@ -217,6 +225,23 @@ def get_sen2_sr_harm_collection(
     cld_prj_dist: float = 1,
     clds_buffer: float = 50,
 ) -> ee.ImageCollection:
+    sen2_start = datetime.datetime(year=2015, month=7, day=1)
+    sen2_end = datetime.datetime.now()
+
+    if not pb_gee_tools.utils._do_dates_overlap(
+            s1_date=start_date, e1_date=end_date, s2_date=sen2_start, e2_date=sen2_end
+    ):
+        raise Exception("Date range specified does not overlap "
+                        "with the availability of Sentinel-2 imagery.")
+
+    ee_start_date = ee.Date.fromYMD(
+            ee.Number(start_date.year),
+            ee.Number(start_date.month),
+            ee.Number(start_date.day),
+    )
+    ee_end_date = ee.Date.fromYMD(
+            ee.Number(end_date.year), ee.Number(end_date.month), ee.Number(end_date.day)
+    )
 
     def _add_cloud_bands(img):
         # Get s2cloudless image, subset the probability band.
@@ -295,15 +320,6 @@ def get_sen2_sr_harm_collection(
         # Subset reflectance bands and update their masks, return the result.
         return img.select("B.*").updateMask(not_cld_shdw)
 
-    ee_start_date = ee.Date.fromYMD(
-        ee.Number(start_date.year),
-        ee.Number(start_date.month),
-        ee.Number(start_date.day),
-    )
-    ee_end_date = ee.Date.fromYMD(
-        ee.Number(end_date.year), ee.Number(end_date.month), ee.Number(end_date.day)
-    )
-
     # Import and filter S2 SR.
     s2_sr_col = (
         ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED")
@@ -345,6 +361,15 @@ def get_sen1_collection(
     end_date: datetime.datetime,
     orbit_pass: int = pb_gee_tools.PB_GEE_SEN1_ASCENDING,
 ):
+    sen1_start = datetime.datetime(year=2014, month=4, day=1)
+    sen1_end = datetime.datetime.now()
+
+    if not pb_gee_tools.utils._do_dates_overlap(
+            s1_date=start_date, e1_date=end_date, s2_date=sen1_start, e2_date=sen1_end
+    ):
+        raise Exception("Date range specified does not overlap "
+                        "with the availability of Sentinel-1 imagery.")
+
     ee_start_date = ee.Date.fromYMD(
         ee.Number(start_date.year),
         ee.Number(start_date.month),
