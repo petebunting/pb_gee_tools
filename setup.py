@@ -46,7 +46,7 @@ setuptools.setup(
     author_email="petebunting@mac.com",
     include_package_data=True,
     #scripts=glob.glob("bin/*.py"),
-    packages=["pb_gee_tools"],
+    packages=["pb_gee_tools", "pb_gee_tools/change"],
     license="LICENSE.txt",
     install_requires=["earthengine-api"],
     url="https://github.com/petebunting/pb_gee_tools",

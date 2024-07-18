@@ -59,10 +59,12 @@ def get_sr_landsat_collection(
     ls_end = datetime.datetime.now()
 
     if not pb_gee_tools.utils._do_dates_overlap(
-            s1_date=start_date, e1_date=end_date, s2_date=ls_start, e2_date=ls_end
+        s1_date=start_date, e1_date=end_date, s2_date=ls_start, e2_date=ls_end
     ):
-        raise Exception("Date range specified does not overlap "
-                        "with the availability of Landsat imagery.")
+        raise Exception(
+            "Date range specified does not overlap "
+            "with the availability of Landsat imagery."
+        )
 
     ee_start_date = ee.Date.fromYMD(
         ee.Number(start_date.year),
@@ -229,18 +231,20 @@ def get_sen2_sr_harm_collection(
     sen2_end = datetime.datetime.now()
 
     if not pb_gee_tools.utils._do_dates_overlap(
-            s1_date=start_date, e1_date=end_date, s2_date=sen2_start, e2_date=sen2_end
+        s1_date=start_date, e1_date=end_date, s2_date=sen2_start, e2_date=sen2_end
     ):
-        raise Exception("Date range specified does not overlap "
-                        "with the availability of Sentinel-2 imagery.")
+        raise Exception(
+            "Date range specified does not overlap "
+            "with the availability of Sentinel-2 imagery."
+        )
 
     ee_start_date = ee.Date.fromYMD(
-            ee.Number(start_date.year),
-            ee.Number(start_date.month),
-            ee.Number(start_date.day),
+        ee.Number(start_date.year),
+        ee.Number(start_date.month),
+        ee.Number(start_date.day),
     )
     ee_end_date = ee.Date.fromYMD(
-            ee.Number(end_date.year), ee.Number(end_date.month), ee.Number(end_date.day)
+        ee.Number(end_date.year), ee.Number(end_date.month), ee.Number(end_date.day)
     )
 
     def _add_cloud_bands(img):
@@ -365,10 +369,12 @@ def get_sen1_collection(
     sen1_end = datetime.datetime.now()
 
     if not pb_gee_tools.utils._do_dates_overlap(
-            s1_date=start_date, e1_date=end_date, s2_date=sen1_start, e2_date=sen1_end
+        s1_date=start_date, e1_date=end_date, s2_date=sen1_start, e2_date=sen1_end
     ):
-        raise Exception("Date range specified does not overlap "
-                        "with the availability of Sentinel-1 imagery.")
+        raise Exception(
+            "Date range specified does not overlap "
+            "with the availability of Sentinel-1 imagery."
+        )
 
     ee_start_date = ee.Date.fromYMD(
         ee.Number(start_date.year),
