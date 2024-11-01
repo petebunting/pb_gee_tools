@@ -111,6 +111,11 @@ def get_sr_landsat_collection(
             ["Blue", "Green", "Red", "NIR", "SWIR1", "SWIR2"],
         )
 
+    def apply_scale_factors(image):
+        optical_bands = image.select('SR_B.').multiply(0.0000275).add(-0.2).multiply(10000)
+        return image.addBands(optical_bands, None, True)
+
+
     lc09_col = ee.ImageCollection("LANDSAT/LC09/C02/T1_L2")
     lc08_col = ee.ImageCollection("LANDSAT/LC08/C02/T1_L2")
     le07_col = ee.ImageCollection("LANDSAT/LE07/C02/T1_L2")
@@ -164,6 +169,7 @@ def get_sr_landsat_collection(
         ls4_img_col = _read_ls_col(
             lt04_col, aoi, ee_start_date, ee_end_date, cloud_thres
         )
+        ls4_img_col = ls4_img_col.map(apply_scale_factors)
 
         ls4_img_col = ls4_img_col.map(_mask_clouds).map(_tm_band_sel_rename)
         out_col = ls4_img_col
@@ -171,6 +177,7 @@ def get_sr_landsat_collection(
         ls5_img_col = _read_ls_col(
             lt05_col, aoi, ee_start_date, ee_end_date, cloud_thres
         )
+        ls5_img_col = ls5_img_col.map(apply_scale_factors)
 
         ls5_img_col = ls5_img_col.map(_mask_clouds).map(_tm_band_sel_rename)
         if not use_ls4:
@@ -181,6 +188,7 @@ def get_sr_landsat_collection(
         ls7_img_col = _read_ls_col(
             le07_col, aoi, ee_start_date, ee_end_date, cloud_thres
         )
+        ls7_img_col = ls7_img_col.map(apply_scale_factors)
 
         ls7_img_col = ls7_img_col.map(_mask_clouds).map(_etm_band_sel_rename)
         if (not use_ls4) and (not use_ls5):
@@ -191,6 +199,7 @@ def get_sr_landsat_collection(
         ls8_img_col = _read_ls_col(
             lc08_col, aoi, ee_start_date, ee_end_date, cloud_thres
         )
+        ls8_img_col = ls8_img_col.map(apply_scale_factors)
 
         if out_lstm_bands:
             ls8_img_col = ls8_img_col.map(_mask_clouds).map(_oli_band_tm_sel_rename)
@@ -204,6 +213,7 @@ def get_sr_landsat_collection(
         ls9_img_col = _read_ls_col(
             lc09_col, aoi, ee_start_date, ee_end_date, cloud_thres
         )
+        ls9_img_col = ls9_img_col.map(apply_scale_factors)
 
         if out_lstm_bands:
             ls9_img_col = ls9_img_col.map(_mask_clouds).map(_oli_band_tm_sel_rename)
